@@ -1,0 +1,42 @@
+/* 13. Basic Styling with CSS */
+
+/* Style the lines by removing the fill and applying a stroke */
+
+body { height: 80%; font-size: 0.875rem; font-family: Arial, sans-serif; }
+
+.yAxis {
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.tick {
+  color:#000;
+}
+
+
+.line {
+    fill: none;
+    stroke-width: 3;
+}
+
+/* Style the dots by assigning a fill and stroke */
+.dot {
+    stroke: #fff;
+}
+  
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: #F1F3F3;
+  stroke: #6F257F;
+  stroke-width: 5px;
+}
+  
+.hover-line {
+  stroke: #6F257F;
+  stroke-width: 2px;
+  stroke-dasharray: 3,3;
+}
