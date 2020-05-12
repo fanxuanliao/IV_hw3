@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 // 2. Use the margin convention practice 
 var margin = { top: 50, right: 50, bottom: 50, left: 50 },
     width = window.innerWidth * 0.8 - margin.left - margin.right // Use the window's width 
@@ -219,7 +219,6 @@ d3.csv("data.csv", row).then(function(data) {
       focus.select(".y-hover-line").attr("x2", width + width);
     }
 */
-=======
 // 2. Use the margin convention practice 
 var margin = { top: 50, right: 50, bottom: 50, left: 50 },
     width = window.innerWidth * 0.5 - margin.left - margin.right // Use the window's width 
