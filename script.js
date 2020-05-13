@@ -6,9 +6,11 @@ var margin = { top: 50, right: 50, bottom: 50, left: 50 },
 let xScale;
 let yMax;
 let yMin;
-let yScale;
-var xAxis;
-var yAxis;
+let y1Scale;
+let y2Scale;
+let xAxis;
+let y1Axis;
+let y2Axis;
 const parseTime = d3.timeParse('%Y')
 const svg = d3.select("div#mutiline_chart_container").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -35,19 +37,29 @@ d3.csv("data.csv", row).then(function(data) {
 
     yMax = d3.max(data, function(d) { return d.percentage; });
     yMin = d3.min(data, function(d) { return d.percentage; });
-    yScale = d3.scaleLinear()
-        .rangeRound([height, 0])
-        .domain([0, yMax]);
+    //y1Scale = d3.scaleLinear()
+    //    .rangeRound([height, 0])
+    //    .domain([0, yMax]);
 
+    y1Scale = d3.scaleLinear()
+            .rangeRound([height, 0])
+            .domain([0, d3.max(data, function(d) { return d.percentage; })]);
+    y2Scale =  d3.scaleLinear()
+            .rangeRound([height, 0])
+            .domain([0, d3.max(data, function(d) { return d.money; })]);
 
     xAxis = d3.axisBottom()
         .scale(xScale) //把範圍丟進去
         .tickFormat(d3.timeFormat("%Y"))
 
-    yAxis = d3.axisLeft()
-        .scale(yScale)
+    y1Axis = d3.axisLeft()
+        .scale(y1Scale)
         //.tickSize(-width, 0, 0)
         .ticks(10); // 區間有幾個
+    let y2Axis = d3.axisRight()
+            .scale(y1Scale)
+            //.tickSize(-width, 0, 0)
+            .ticks(10); // 區間有幾個
 
     //----------------------------DRAW AXIS----------------------------//
     svg.append("g")
@@ -61,10 +73,14 @@ d3.csv("data.csv", row).then(function(data) {
 
     svg.append("g")
         .attr("class", "yAxis")
-        .call(yAxis)
+        .call(y1Axis)
         .attr("transform", "translate(0,0)");
-    //----------------------------DRAW LINE---------------------------//
+    svg.append("g")
+            .attr("class", "yAxis")
+            .call(y2Axis)
+            .attr("transform", "translate(" + (width*0.8 + margin.right) + "0,0)");
 
+    //----------------------------DRAW LINE---------------------------//
     var dataset = d3.map(function(d) { return { "y": d.percentage } })
 
 
@@ -73,7 +89,7 @@ d3.csv("data.csv", row).then(function(data) {
 
     var line = d3.line()
         .x(function(d) { return xScale(d.year); }) // set the x values for the line generator
-        .y(function(d) { return yScale(d.percentage); }); // set the y values for the line generator 
+        .y(function(d) { return y1Scale(d.percentage); }); // set the y values for the line generator 
     //.curve(d3.curveMonotoneX) // apply smoothing to the line
 
     var color = d3.scaleOrdinal(d3.schemeSet2);
@@ -137,7 +153,7 @@ d3.csv("data.csv", row).then(function(data) {
             .style("opacity", .4)
             .style('fill', function(d, i) { return color(d.nation); })
             .attr("cx", function(d) { return xScale(d.year) })
-            .attr("cy", function(d) { return yScale(d.percentage) })
+            .attr("cy", function(d) { return y1Scale(d.percentage) })
             .attr("r", 6)
             .on("mouseover", function(d) {
 
@@ -188,7 +204,7 @@ d3.csv("data.csv", row).then(function(data) {
         var legendSpace = height * 0.8 / dataNest.length;
         // Add the Legend
         svg.append("text")
-            .attr("x", width * 0.8 + margin.right * 2) // space legend
+            .attr("x", width * 0.8 + margin.right * 3) // space legend
             .attr("y", i * legendSpace)
             .attr("class", "legend") // style the legend
             .style("font-size", "15px") // Change the font size
