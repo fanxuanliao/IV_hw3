@@ -1,3 +1,4 @@
+// 2. Use the margin convention practice 
 var margin = { top: 50, right: 50, bottom: 50, left: 50 },
     width = window.innerWidth * 0.8 - margin.left - margin.right // Use the window's width 
     ,
@@ -90,7 +91,9 @@ d3.csv("data.csv", row).then(function(data) {
         svg.append("path")
             .attr("class", "line")
             .attr("id", d.key)
-            .style("stroke", function() { return d.color = color(d.key); })
+            .style("stroke", function() {
+                return d.color = color(d.key);
+            })
             .style("opacity", .4)
             .attr("d", line(d.values))
             .on("mouseover", function(d) {
@@ -113,19 +116,7 @@ d3.csv("data.csv", row).then(function(data) {
                     .transition()
                     .duration(300)
                     .style("opacity", .4);
-
-            })
-            .on("click", function() {
-                // Determine if current line is visible
-                var active = d3.select.active ? false : true,
-                    newOpacity = active ? 0 : 1;
-                // Hide or show the elements
-                d3.select("#blueLine").style("opacity", newOpacity);
-                d3.select("#blueAxis").style("opacity", newOpacity);
-                // Update whether or not the elements are active
             });
-
-
         var keyID = d.key;
         // Appends a circle for each datapoint 
         svg.selectAll(".dot")
@@ -133,7 +124,6 @@ d3.csv("data.csv", row).then(function(data) {
             .enter()
             .append("circle") // Assign a class for styling
             .attr("class", "dot")
-            .attr("id", d.key)
             .style("opacity", .4)
             .style('fill', function(d, i) { return color(d.nation); })
             .attr("cx", function(d) { return xScale(d.year) })
@@ -214,4 +204,18 @@ d3.csv("data.csv", row).then(function(data) {
         */
 
     });
+
+    /* 好像只有D3 v4有bisectDate
+    function mousemove() {
+      var x0 = xScale.invert(d3.mouse(this)[0]),
+          i = bisectDate(data, x0, 1),
+          d0 = data[i - 1],
+          d1 = data[i],
+          d = x0 - d0.year > d1.year - x0 ? d1 : d0;
+      focus.attr("transform", "translate(" + xScale(d.year) + "," + y(d.percentage) + ")");
+      focus.select("text").text(function() { return d.value; });
+      focus.select(".x-hover-line").attr("y2", height - yScale(d.percentage));
+      focus.select(".y-hover-line").attr("x2", width + width);
+    }
+*/
 });
