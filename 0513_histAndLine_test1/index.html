@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+  <div class="card vis-main">
+    <div class="info">
+      <h3>民國96至108年之高鐵運量統計圖</h3>
+      <p>資料來源：<a target="_blank" href="https://www.rb.gov.tw/showpage_list.php?lmenuid=10&smenuid=71&tmenuid=194&pagetype=0">交通部鐵道局</a></p>
+      <div class="year-title">民國 <span id="year"></span> 年</div>
+      <div class="data">
+        <div>
+          <div class="axis-title" style="color: #d85221;">旅客人數</div>
+          <p>總計：<span id="sumPassenger"></span></p>
+          <p>平均：<span id="avgPassenger"></span></p>
+          <p>最高：<span id="maxPassenger"></span></p>
+          <p>最低：<span id="minPassenger"></span></p>
+        </div>
+        <div>
+          <div class="axis-title" style="color: #aed581;">列車次數</div>
+          <p>總計：<span id="sumNumber"></span></p>
+          <p>平均：<span id="avgNumber"></span></p>
+          <p>最高：<span id="maxNumber"></span></p>
+          <p>最低：<span id="minNumber"></span></p>
+        </div>
+      </div>
+    </div>
+    <div class="graph">
+      <div id="slider"></div>
+      <div id="chart"></div>
+    </div>
+  </div>
+  <div class="card vis-description">
+    <div class="content">
+      <p><b>圖表說明：</b>此圖表旨在呈現歷年來的高鐵運量分布與成長趨勢，上方的時間軸可以自由拉動來切換年代。藉由多向度的資料展現，以X軸標示月份、左Y軸標示旅客人數、右Y軸標示列車次數，使用者能進行綜合比較、亦能獨立查看，而當鼠標移動至單筆資料時，會顯示更詳細的資訊。</p>
+      <p><b>設計選擇：</b>因為月份可為categorical或ordinal的型態，且旅客人數和列車次數在類型和單位上皆不同，故分別使用長條圖和折線圖來表達各自的分布狀況，並以顏色作為區隔，另外則由左至右呈現年代順序的變動關係。</p>
+      <p><b>經驗法則：</b>人類對於相對數值的判斷會更加容易和精準，所以起始基準均設為一致，也由於相似性中的差異可以突出畫面吸引注意，因而透過色彩的變化來顯示最大、最小值，同時不考慮使用三維空間以增加肉眼的識別度。</p>
+    </div>
+  </div>
+</body>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/d3-simple-slider"></script>
+<script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+<script type="text/javascript" src="index.js"></script>
+
+</html>
