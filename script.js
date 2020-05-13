@@ -3,10 +3,10 @@ var margin = { top: 50, right: 50, bottom: 50, left: 50 },
     ,
     height = window.innerHeight * 0.8 - margin.top - margin.bottom; // Use the window's height
 
-var xScale;
-var yMax;
-var yMin;
-var yScale;
+let xScale;
+let yMax;
+let yMin;
+let yScale;
 var xAxis;
 var yAxis;
 const parseTime = d3.timeParse('%Y')
