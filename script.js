@@ -31,8 +31,10 @@ function row(d) {
 
 d3.csv("data.csv", row).then(function(data) {
     //----------------------------SCALES----------------------------//
-    xScale = d3.scaleTime()
-        .domain(d3.extent(data.map(function(d) { return d.year; }))) // input
+    //xScale = d3.scaleLinear()
+    //    .domain(d3.extent(data.map(function(d) { return d.year; }))) // input
+    xScale = d3.scaleBand()
+        .domain([parseTime(2009),parseTime(2010),parseTime(2011),parseTime(2012),parseTime(2013),parseTime(2014),parseTime(2015),parseTime(2016),parseTime(2017),parseTime(2018),parseTime(2019),])
         .rangeRound([0, width * 0.8]); // output range
 
     //yMax = d3.max(data, function(d) { return d.percentage; });
@@ -75,7 +77,7 @@ d3.csv("data.csv", row).then(function(data) {
     svg.append("g")
             .attr("class", "yAxis")
             .call(y2Axis)
-            .attr("transform", "translate(" + (width*0.8 + margin.right) + "0,0)");
+            .attr("transform", "translate(" + (width*0.8) + ",0)");
 
     //--------------------------DRAW HISTOGRAM------------------------//
     let barChart = svg.append('g').attr('class', 'bar-chart');
@@ -127,13 +129,14 @@ d3.csv("data.csv", row).then(function(data) {
         .entries(data);
 
 
-
+        var tick = d3.select
     // Loop through each  key
     dataNest.forEach(function(d, i) {
         //Append the path, bind the data, and call the line generator 
         svg.append("path")
             .attr("class", "line")
             .attr("id", d.key)
+            .attr("transform", "translate(" + xScale.bandwidth() / 2 + ",0)")
             .style("stroke", function() { return d.color = color(d.key); })
             .style("opacity", .4)
             .attr("d", line(d.values))
@@ -178,6 +181,7 @@ d3.csv("data.csv", row).then(function(data) {
             .append("circle") // Assign a class for styling
             .attr("class", "dot")
             .attr("id", d.key)
+            .attr("transform", "translate(" + xScale.bandwidth() / 2 + ",0)")
             .style("opacity", .4)
             .style('fill', function(d, i) { return color(d.nation); })
             .attr("cx", function(d) { return xScale(d.year) })
@@ -232,7 +236,7 @@ d3.csv("data.csv", row).then(function(data) {
         var legendSpace = height * 0.8 / dataNest.length;
         // Add the Legend
         svg.append("text")
-            .attr("x", width * 0.8 + margin.right * 3) // space legend
+            .attr("x", width * 0.8 + margin.right * 2) // space legend
             .attr("y", i * legendSpace)
             .attr("class", "legend") // style the legend
             .style("font-size", "15px") // Change the font size
