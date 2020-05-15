@@ -6,19 +6,21 @@
     <link rel="stylesheet" type="text/css" href="./style.css">
     <!-- Load in the d3 library -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script>
 </head>
 <!-- Body tag is where we will append our SVG and SVG objects-->
 
 <body>
-    <!-- Add 6 buttons -->
-    <button class="button button1" onclick="update('America')">美國</button>
-    <button class="button button1" onclick="update('Japan')">日本</button>
-    <button class="button button1" onclick="update('Korea')">韓國</button>
-    <button class="button button1" onclick="update('Singapore')">新加坡</button>
-    <button class="button button1" onclick="update('China')">中國</button>
-    <button class="button button1" onclick="update('England')">英國</button>
-	<!-- Container -->
-    <div id="mutiline_chart_container"></div>
+    <!-- Add 5 buttons -->
+    <div id='button'>
+        <button id='Taiwan'>台灣</button>
+        <button id='Korea'>韓國</button>
+        <button id='Japan'>日本</button>
+        <button id='Singapore'>新加坡</button>
+        <button id='America'>美國</button>
+    </div>
 
+    <!-- Container -->
+    <div id="mutiline_chart_container"></div>
 </body>
 <script src="script.js"></script>

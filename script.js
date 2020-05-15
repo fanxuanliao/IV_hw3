@@ -26,6 +26,7 @@ function row(d) {
         year: parseTime(d.year),
         nation: d.nation,
         percentage: +d.percentage,
+        money: +d.money
     }
 };
 
@@ -78,36 +79,6 @@ d3.csv("data.csv", row).then(function(data) {
             .attr("class", "yAxis")
             .call(y2Axis)
             .attr("transform", "translate(" + (width*0.8) + ",0)");
-
-    //--------------------------DRAW HISTOGRAM------------------------//
-    let barChart = svg.append('g').attr('class', 'bar-chart');
-
-
-    //Update histogram data
-    function update(newData) {
-        let bar = barChart.selectAll('.bar').data(newData);
-        bar.exit().remove();
-        bar.enter()
-            .append('rect')
-            .attr('class', 'bar')
-            .attr('fill', orange)
-            .attr('opacity', d => sortPassenger(d))
-            .attr('x', d => xScale(d.month))
-            .attr('y', d => y1Scale(d.passenger))
-            .attr('width', xScale.bandwidth())
-            .attr('height', d => y1Scale(0) - y1Scale(d.passenger))
-            .on("mouseover", bar_tooltip.show)
-            .on("mouseout", bar_tooltip.hide);
-        bar.transition()
-            .duration(500)
-            .ease(d3.easeLinear)
-            .attr('opacity', d => sortPassenger(d))
-            .attr('y', d => y1Scale(d.passenger))
-            .attr('height', d => y1Scale(0) - y1Scale(d.passenger));
-     };
-
-
-
 
 
     //----------------------------DRAW LINE---------------------------//
@@ -260,6 +231,111 @@ d3.csv("data.csv", row).then(function(data) {
             d.active = active;
         })
         */
-
     });
+
+    //--------------------------DRAW HISTOGRAM------------------------//
+    let barChart = svg.append('g').attr('class', 'bar-chart');
+
+    var dataTW = data.filter(function(d) {
+                    if (d['nation'] == 'Taiwan') {
+                        return d;
+                    }
+                }); //找到該button對應的資料  
+    firstHist(dataTW);
+    
+    //first histogram 
+    function firstHist(newData) {
+        console.log('enter first')
+
+        //Tooltip of histogram
+        let bar_tooltip = d3.tip()
+        .attr('class', 'd3-tip')
+            .offset([-10, 0])
+            .html(d => {
+                return `<div>社福支出比</div><div>${(d.money)} %</div>`;
+            });
+        barChart.call(bar_tooltip);
+
+        //Draw histogram
+        let bar = barChart.selectAll('.bar').data(newData);
+        bar.enter()
+            .append('rect')
+            .attr('class', 'bar')
+            .merge(bar)
+            .attr('fill', d => color(d.nation))
+            //.attr('opacity', d => sortPassenger(d))
+            .attr('x', d => xScale(d.year))
+            .attr('y', d => y2Scale(d.money))
+            .attr('width', xScale.bandwidth())
+            .attr('height', d => y2Scale(0) - y2Scale(d.money))
+            .on("mouseover", bar_tooltip.show)
+            .on("mouseout", bar_tooltip.hide);
+            
+        //一開始的 transition 沒有用啦??????????
+        //bar.transition()
+        //    .duration(500)
+        //    .ease(d3.easeLinear)
+            //.attr('opacity', d => sortPassenger(d))
+        //    .attr('y', d => y2Scale(d.money))
+        //    .attr('height', d => y2Scale(0) - y2Scale(d.money));
+
+     };
+
+    //Update histogram data
+    function update(newData) {
+        console.log('enter update')
+
+        //Tooltip of histogram
+        let bar_tooltip = d3.tip()
+        .attr('class', 'd3-tip')
+            .offset([-10, 0])
+            .html(d => {
+                return `<div>社福支出比</div><div>${(d.money)} %</div>`;
+            });
+        barChart.call(bar_tooltip);
+
+        //Draw histogram
+        let bar = barChart.selectAll('.bar').data(newData);
+        bar.exit().remove();
+        bar.enter()
+            .append('rect')
+            .attr('class', 'bar')
+            .merge(bar)
+            .attr('fill', d => color(d.nation))
+            //.attr('opacity', d => sortPassenger(d))
+            .attr('x', d => xScale(d.year))
+            //.attr('y', d => y2Scale(d.money))
+            .attr('width', xScale.bandwidth())
+            //.attr('height', d => y2Scale(0) - y2Scale(d.money))
+            .on("mouseover", bar_tooltip.show)
+            .on("mouseout", bar_tooltip.hide);
+        bar.transition()
+            .duration(500)
+            .ease(d3.easeLinear)
+            //.attr('opacity', d => sortPassenger(d))
+            .attr('y', d => y2Scale(d.money))
+            .attr('height', d => y2Scale(0) - y2Scale(d.money));
+     };
+
+
+     //click function
+     let button = d3.selectAll('#button > button').on('click', function() {
+            var chartType = d3.select(this).attr('id'); //按下button出現哪一年
+            console.log(chartType);
+
+            //which nation's data
+            var dataSelect = data.filter(function(d) {
+                    if (d['nation'] == chartType) {
+                        return d;
+                    }
+                }); //找到該button對應的資料
+            
+            update(dataSelect);
+
+        });
+
+
+
+
+
 });
