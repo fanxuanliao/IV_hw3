@@ -4,8 +4,8 @@ var margin = { top: 50, right: 50, bottom: 50, left: 50 },
     height = window.innerHeight * 0.8 - margin.top - margin.bottom; // Use the window's height
 
 let xScale;
-let yMax;
-let yMin;
+//let yMax;
+//let yMin;
 let y1Scale;
 let y2Scale;
 let xAxis;
@@ -35,11 +35,8 @@ d3.csv("data.csv", row).then(function(data) {
         .domain(d3.extent(data.map(function(d) { return d.year; }))) // input
         .rangeRound([0, width * 0.8]); // output range
 
-    yMax = d3.max(data, function(d) { return d.percentage; });
-    yMin = d3.min(data, function(d) { return d.percentage; });
-    //y1Scale = d3.scaleLinear()
-    //    .rangeRound([height, 0])
-    //    .domain([0, yMax]);
+    //yMax = d3.max(data, function(d) { return d.percentage; });
+    //yMin = d3.min(data, function(d) { return d.percentage; });
 
     y1Scale = d3.scaleLinear()
             .rangeRound([height, 0])
@@ -79,6 +76,37 @@ d3.csv("data.csv", row).then(function(data) {
             .attr("class", "yAxis")
             .call(y2Axis)
             .attr("transform", "translate(" + (width*0.8 + margin.right) + "0,0)");
+
+    //--------------------------DRAW HISTOGRAM------------------------//
+    let barChart = svg.append('g').attr('class', 'bar-chart');
+
+
+    //Update histogram data
+    function update(newData) {
+        let bar = barChart.selectAll('.bar').data(newData);
+        bar.exit().remove();
+        bar.enter()
+            .append('rect')
+            .attr('class', 'bar')
+            .attr('fill', orange)
+            .attr('opacity', d => sortPassenger(d))
+            .attr('x', d => xScale(d.month))
+            .attr('y', d => y1Scale(d.passenger))
+            .attr('width', xScale.bandwidth())
+            .attr('height', d => y1Scale(0) - y1Scale(d.passenger))
+            .on("mouseover", bar_tooltip.show)
+            .on("mouseout", bar_tooltip.hide);
+        bar.transition()
+            .duration(500)
+            .ease(d3.easeLinear)
+            .attr('opacity', d => sortPassenger(d))
+            .attr('y', d => y1Scale(d.passenger))
+            .attr('height', d => y1Scale(0) - y1Scale(d.passenger));
+     };
+
+
+
+
 
     //----------------------------DRAW LINE---------------------------//
     var dataset = d3.map(function(d) { return { "y": d.percentage } })
