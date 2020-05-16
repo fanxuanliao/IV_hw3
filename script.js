@@ -201,27 +201,13 @@ d3.csv("data.csv", row).then(function(data) {
             .style("fill", function() { // Add the colours dynamically
                 return d.color = color(d.key);
             })
-            /*
-            .on('click', function() {
-                var chartType = d3.select(this).attr('id'); //按下button出現哪一年
-                console.log(chartType);
-                //which nation's data
-                var dataSelect = data.filter(function(d) {
-                    if (d['nation'] == chartType) {
-                        return d;
-                    }
-                }); //找到該button對應的資料
 
-                update(dataSelect);
-
-            })
-            */
-            //svg.selectAll("rect")
             svg.append("text")
             .attr("id", d.key)
             .attr('y','16')
             .attr("transform", "translate(" + (width * 0.83 + margin.right * 2) + "," + (i * legendSpace*1.5) + ")")
             .style("fill","white")
+            .style("cursor", "pointer")
             .style("font-size", "15px") // Change the font size
             .style("font-weight", "bold") // Change the font to bold
             .style("text-anchor", "middle") // center the legend
@@ -245,16 +231,6 @@ d3.csv("data.csv", row).then(function(data) {
     //--------------------------DRAW HISTOGRAM------------------------//
     let barChart = svg.append('g').attr('class', 'bar-chart');
 
-    //Tooltip of histogram
-    /*
-    let bar_tooltip = d3.tip()
-        .attr('class', 'd3-tip')
-        .offset([-10, 0])
-        .html(d => {
-            return `<div>社福支出比</div><div>${(d.money)} %</div>`;
-        });
-    barChart.call(bar_tooltip);
-*/
     //Draw first histogram
     var dataTW = data.filter(function(d) {
         if (d['nation'] == '台灣') {
@@ -352,26 +328,5 @@ d3.csv("data.csv", row).then(function(data) {
             .attr('y', d => y2Scale(d.money))
             .attr('height', d => y2Scale(0) - y2Scale(d.money));
     };
-
-
-    //click function
-    let button = d3.selectAll('#button > button').on('click', function() {
-        var chartType = d3.select(this).attr('id'); //按下button出現哪一年
-        console.log(chartType);
-
-        //which nation's data
-        var dataSelect = data.filter(function(d) {
-            if (d['nation'] == chartType) {
-                return d;
-            }
-        }); //找到該button對應的資料
-
-        update(dataSelect);
-
-    });
-
-
-
-
 
 });
