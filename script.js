@@ -35,18 +35,20 @@ d3.csv("data.csv", row).then(function(data) {
     //xScale = d3.scaleLinear()
     //    .domain(d3.extent(data.map(function(d) { return d.year; }))) // input
     xScale = d3.scaleBand()
-        .domain([parseTime(2009),parseTime(2010),parseTime(2011),parseTime(2012),parseTime(2013),parseTime(2014),parseTime(2015),parseTime(2016),parseTime(2017),parseTime(2018),parseTime(2019),])
+        .domain([parseTime(2009), parseTime(2010), parseTime(2011), parseTime(2012), parseTime(2013), parseTime(2014), parseTime(2015), parseTime(2016), parseTime(2017), parseTime(2018), parseTime(2019), ])
         .rangeRound([0, width * 0.8]); // output range
 
     //yMax = d3.max(data, function(d) { return d.percentage; });
     //yMin = d3.min(data, function(d) { return d.percentage; });
 
-    y1Scale = d3.scaleLinear()
-            .rangeRound([height, 0])
-            .domain([0, d3.max(data, function(d) { return d.percentage; })]);
-    y2Scale =  d3.scaleLinear()
-            .rangeRound([height, 0])
-            .domain([0, d3.max(data, function(d) { return d.money; })]);
+    y1Scale = d3.scaleLinear() //貧窮率
+        .rangeRound([height, 0])
+        .domain([0, d3.max(data, function(d) { return d.percentage; })]);
+
+    y2Scale = d3.scaleLinear() //社福支出
+        .rangeRound([height, 0])
+        //.domain([0, d3.max(data, function(d) { return d.money; })]);
+        .domain([0, 100]); //0%-100%
 
     xAxis = d3.axisBottom()
         .scale(xScale) //把範圍丟進去
@@ -56,10 +58,10 @@ d3.csv("data.csv", row).then(function(data) {
         .scale(y1Scale)
         //.tickSize(-width, 0, 0)
         .ticks(10); // 區間有幾個
-    let y2Axis = d3.axisRight()
-            .scale(y1Scale)
-            //.tickSize(-width, 0, 0)
-            .ticks(10); // 區間有幾個
+    y2Axis = d3.axisRight()
+        .scale(y2Scale)
+        //.tickSize(-width, 0, 0)
+        .ticks(10); // 區間有幾個
 
     //----------------------------DRAW AXIS----------------------------//
     svg.append("g")
@@ -76,9 +78,9 @@ d3.csv("data.csv", row).then(function(data) {
         .call(y1Axis)
         .attr("transform", "translate(0,0)");
     svg.append("g")
-            .attr("class", "yAxis")
-            .call(y2Axis)
-            .attr("transform", "translate(" + (width*0.8) + ",0)");
+        .attr("class", "yAxis")
+        .call(y2Axis)
+        .attr("transform", "translate(" + (width * 0.8) + ",0)");
 
 
     //----------------------------DRAW LINE---------------------------//
@@ -100,7 +102,7 @@ d3.csv("data.csv", row).then(function(data) {
         .entries(data);
 
 
-        var tick = d3.select
+    var tick = d3.select
     // Loop through each  key
     dataNest.forEach(function(d, i) {
         //Append the path, bind the data, and call the line generator 
@@ -236,25 +238,26 @@ d3.csv("data.csv", row).then(function(data) {
     //--------------------------DRAW HISTOGRAM------------------------//
     let barChart = svg.append('g').attr('class', 'bar-chart');
 
+    //Tooltip of histogram
+    let bar_tooltip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(d => {
+            return `<div>社福支出比</div><div>${(d.money)} %</div>`;
+        });
+    barChart.call(bar_tooltip);
+
+    //Draw first histogram
     var dataTW = data.filter(function(d) {
-                    if (d['nation'] == 'Taiwan') {
-                        return d;
-                    }
-                }); //找到該button對應的資料  
+        if (d['nation'] == 'Taiwan') {
+            return d;
+        }
+    }); //找到該button對應的資料  
     firstHist(dataTW);
-    
+
     //first histogram 
     function firstHist(newData) {
         console.log('enter first')
-
-        //Tooltip of histogram
-        let bar_tooltip = d3.tip()
-        .attr('class', 'd3-tip')
-            .offset([-10, 0])
-            .html(d => {
-                return `<div>社福支出比</div><div>${(d.money)} %</div>`;
-            });
-        barChart.call(bar_tooltip);
 
         //Draw histogram
         let bar = barChart.selectAll('.bar').data(newData);
@@ -270,29 +273,20 @@ d3.csv("data.csv", row).then(function(data) {
             .attr('height', d => y2Scale(0) - y2Scale(d.money))
             .on("mouseover", bar_tooltip.show)
             .on("mouseout", bar_tooltip.hide);
-            
+
         //一開始的 transition 沒有用啦??????????
         //bar.transition()
         //    .duration(500)
         //    .ease(d3.easeLinear)
-            //.attr('opacity', d => sortPassenger(d))
+        //.attr('opacity', d => sortPassenger(d))
         //    .attr('y', d => y2Scale(d.money))
         //    .attr('height', d => y2Scale(0) - y2Scale(d.money));
 
-     };
+    };
 
     //Update histogram data
     function update(newData) {
         console.log('enter update')
-
-        //Tooltip of histogram
-        let bar_tooltip = d3.tip()
-        .attr('class', 'd3-tip')
-            .offset([-10, 0])
-            .html(d => {
-                return `<div>社福支出比</div><div>${(d.money)} %</div>`;
-            });
-        barChart.call(bar_tooltip);
 
         //Draw histogram
         let bar = barChart.selectAll('.bar').data(newData);
@@ -315,24 +309,24 @@ d3.csv("data.csv", row).then(function(data) {
             //.attr('opacity', d => sortPassenger(d))
             .attr('y', d => y2Scale(d.money))
             .attr('height', d => y2Scale(0) - y2Scale(d.money));
-     };
+    };
 
 
-     //click function
-     let button = d3.selectAll('#button > button').on('click', function() {
-            var chartType = d3.select(this).attr('id'); //按下button出現哪一年
-            console.log(chartType);
+    //click function
+    let button = d3.selectAll('#button > button').on('click', function() {
+        var chartType = d3.select(this).attr('id'); //按下button出現哪一年
+        console.log(chartType);
 
-            //which nation's data
-            var dataSelect = data.filter(function(d) {
-                    if (d['nation'] == chartType) {
-                        return d;
-                    }
-                }); //找到該button對應的資料
-            
-            update(dataSelect);
+        //which nation's data
+        var dataSelect = data.filter(function(d) {
+            if (d['nation'] == chartType) {
+                return d;
+            }
+        }); //找到該button對應的資料
 
-        });
+        update(dataSelect);
+
+    });
 
 
 
