@@ -1,11 +1,9 @@
 var margin = { top: 50, right: 50, bottom: 50, left: 50 },
-    width = window.innerWidth * 0.8 - margin.left - margin.right // Use the window's width 
+    width = window.innerWidth * 0.6 - margin.left - margin.right // Use the window's width 
     ,
-    height = window.innerHeight * 0.8 - margin.top - margin.bottom; // Use the window's height
+    height = window.innerHeight * 0.6 - margin.top - margin.bottom; // Use the window's height
 
 let xScale;
-//let yMax;
-//let yMin;
 let y1Scale;
 let y2Scale;
 let xAxis;
@@ -87,8 +85,11 @@ d3.csv("data.csv", row).then(function(data) {
     var dataset = d3.map(function(d) { return { "y": d.percentage } })
 
 
-    var tooltipDiv = d3.select("body").append("div")
-        .attr("class", "tooltip");
+    var circle_tooltipDiv = d3.select("body").append("div")
+        .attr("class", "circle-tooltip");
+
+    var bar_tooltipDiv = d3.select("body").append("div")
+        .attr("class", "bar-tooltip");
 
     var line = d3.line()
         .x(function(d) { return xScale(d.year); }) // set the x values for the line generator
@@ -105,6 +106,52 @@ d3.csv("data.csv", row).then(function(data) {
     var tick = d3.select
     // Loop through each  key
     dataNest.forEach(function(d, i) {
+        // append circle to each path
+        svg.selectAll(".dot")
+            .data(data)
+            .enter()
+            .append("circle") // Assign a class for styling
+            .attr("class", "dot")
+            //.attr("id", d.key)
+            .attr("transform", "translate(" + xScale.bandwidth() / 2 + ",0)")
+            //.style("opacity", .4)
+            .style('fill', function(d, i) { return color(d.nation); })
+            .attr("cx", function(d) { return xScale(d.year) })
+            .attr("cy", function(d) { return y1Scale(d.percentage) })
+            .attr("r", 6)
+
+            .on("mouseover", function(d) {
+                /*
+                                // animate point useful when we have points ploted close to each other.
+                                d3.select(this)
+                                    .transition()
+                                    .duration(300)
+                                    .attr("r", 8)
+                                    .style("opacity", 1);
+                */
+                // code block for tooltip
+                circle_tooltipDiv.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                circle_tooltipDiv.html('貧窮率： ' + d.percentage + '%')
+                    .style("background", color(d.nation))
+                    .style("left", (d3.event.pageX) - 30 + "px")
+                    .style("top", (d3.event.pageY - 40) + "px");
+            })
+            .on("mouseout", function(d) {
+
+                // animate point back to origional style
+                d3.select(this)
+                    .transition()
+                    .duration(300)
+                    .attr("r", 6)
+
+                circle_tooltipDiv.transition()
+                    .duration(700)
+                    .style("opacity", 0);
+            });
+
+
         //Append the path, bind the data, and call the line generator 
         svg.append("path")
             .attr("class", "line")
@@ -137,112 +184,69 @@ d3.csv("data.csv", row).then(function(data) {
 
             })
             */
-            .on("click", function() {
-                // Determine if current line is visible
-                var active = d3.select.active ? false : true,
-                    newOpacity = active ? 0 : 1;
-                // Hide or show the elements
-                d3.select("#blueLine").style("opacity", newOpacity);
-                d3.select("#blueAxis").style("opacity", newOpacity);
-                // Update whether or not the elements are active
-            });
-
-
-        var keyID = d.key;
-        // Appends a circle for each datapoint 
-        svg.selectAll(".dot")
-            .data(data)
-            .enter()
-            .append("circle") // Assign a class for styling
-            .attr("class", "dot")
-            .attr("id", d.key)
-            .attr("transform", "translate(" + xScale.bandwidth() / 2 + ",0)")
-            //.style("opacity", .4)
-            .style('fill', function(d, i) { return color(d.nation); })
-            .attr("cx", function(d) { return xScale(d.year) })
-            .attr("cy", function(d) { return y1Scale(d.percentage) })
-            .attr("r", 6)
-            
-            .on("mouseover", function(d) {
-/*
-                // animate point useful when we have points ploted close to each other.
-                d3.select(this)
-                    .transition()
-                    .duration(300)
-                    .attr("r", 8)
-                    .style("opacity", 1);
-
-                d3.selectAll("#" + keyID)
-                    .transition()
-                    .duration(300)
-                    .style("opacity", 1);
-*/
-                // code block for tooltip
-                tooltipDiv.transition()
-                    .duration(200)
-                    .style("opacity", .9);
-                tooltipDiv.html(d.percentage + '%')
-                    .style("background", color(d.nation))
-                    .style("left", (d3.event.pageX) - 30 + "px")
-                    .style("top", (d3.event.pageY - 40) + "px");
-            })
-            .on("mouseout", function(d) {
-
-                // animate point back to origional style
-                d3.select(this)
-                    .transition()
-                    .duration(300)
-                    .attr("r", 6)
-                    //.style("opacity", .4);
-/*
-                d3.select("#" + keyID)
-                    .transition()
-                    .duration(300)
-                    .style("opacity", 0.4);
-*/
-
-                tooltipDiv.transition()
-                    .duration(500)
-                    .style("opacity", 0);
-            });
-            
-        //.on("mouseover", function() { focus.style("display", null); })
-        //.on("mouseout", function() { focus.style("display", "none"); })
-        // .on("mousemove", mousemove);
 
         var legendSpace = height * 0.8 / dataNest.length;
-        // Add the Legend
-        svg.append("text")
+        // Add the button
+        svg.append("rect")
+           .attr("transform", "translate(0" + "," + i * legendSpace / 2 + ")")
+           //.attr("transform", "translate(" + (width * 0.1 + margin.right * 2) + "," + (i * legendSpace) + ")")
+            .attr("class", "button") // style the legend
+            .attr("id", d.key)
+            .attr("ry", "6")
+            .attr("rx", "6")
+            .attr("width", 50)
+            .attr("height", 20)
             .attr("x", width * 0.8 + margin.right * 2) // space legend
             .attr("y", i * legendSpace)
-            .attr("class", "legend") // style the legend
-            .style("font-size", "15px") // Change the font size
-            .style("font-weight", "bold") // Change the font to bold
-            .style("text-anchor", "middle") // center the legend
             .style("fill", function() { // Add the colours dynamically
                 return d.color = color(d.key);
             })
-            .text(d.key);
+            /*
+            .on('click', function() {
+                var chartType = d3.select(this).attr('id'); //按下button出現哪一年
+                console.log(chartType);
+                //which nation's data
+                var dataSelect = data.filter(function(d) {
+                    if (d['nation'] == chartType) {
+                        return d;
+                    }
+                }); //找到該button對應的資料
 
-        /*
-        .on("click", function() {
-            // Determine if current line is visible 
-            var active = d.active ? false : true,
-                newOpacity = active ? 0 : 1;
-            // Hide or show the elements based on the ID
-            d3.select("#tag" + d.key.replace(/\s+/g, ''))
-                .transition().duration(100)
-                .style("opacity", newOpacity);
-            // Update whether or not the elements are active
-            d.active = active;
-        })
-        */
+                update(dataSelect);
+
+            })
+            */
+            //svg.selectAll("rect")
+            svg.append("text")
+            .attr("id", d.key)
+            .attr('y','16')
+            .attr("transform", "translate(" + (width * 0.83 + margin.right * 2) + "," + (i * legendSpace*1.5) + ")")
+            .style("fill","white")
+            .style("font-size", "15px") // Change the font size
+            .style("font-weight", "bold") // Change the font to bold
+            .style("text-anchor", "middle") // center the legend
+            .text(d.key)
+             .on('click', function() {
+                var chartType = d3.select(this).attr('id'); //按下button出現哪一年
+                console.log(chartType);
+                //which nation's data
+                var dataSelect = data.filter(function(d) {
+                    if (d['nation'] == chartType) {
+                        return d;
+                    }
+                }); //找到該button對應的資料
+
+                update(dataSelect);
+
+            });
+
     });
-
+ 
     //--------------------------DRAW HISTOGRAM------------------------//
     let barChart = svg.append('g').attr('class', 'bar-chart');
 
     //Tooltip of histogram
+    /*
     let bar_tooltip = d3.tip()
         .attr('class', 'd3-tip')
         .offset([-10, 0])
@@ -250,10 +254,10 @@ d3.csv("data.csv", row).then(function(data) {
             return `<div>社福支出比</div><div>${(d.money)} %</div>`;
         });
     barChart.call(bar_tooltip);
-
+*/
     //Draw first histogram
     var dataTW = data.filter(function(d) {
-        if (d['nation'] == 'Taiwan') {
+        if (d['nation'] == '台灣') {
             return d;
         }
     }); //找到該button對應的資料  
@@ -275,8 +279,25 @@ d3.csv("data.csv", row).then(function(data) {
             .attr('y', d => y2Scale(d.money))
             .attr('width', xScale.bandwidth())
             .attr('height', d => y2Scale(0) - y2Scale(d.money))
-            .on("mouseover", bar_tooltip.show)
-            .on("mouseout", bar_tooltip.hide);
+            .on("mouseover", function(d) {
+                // code block for tooltip
+                bar_tooltipDiv.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                bar_tooltipDiv.html('社福支出比： ' + d.money + '%')
+                    .style("background", color(d.nation))
+                    .style("left", (d3.event.pageX) - 30 + "px")
+                    .style("top", (d3.event.pageY - 60) + "px");
+            })
+            .on("mouseout", function(d) {
+                // animate point back to origional style
+                d3.select(this)
+                    .transition()
+                    .duration(300)
+                bar_tooltipDiv.transition()
+                    .duration(700)
+                    .style("opacity", 0);
+            });
 
         //一開始的 transition 沒有用啦??????????
         //bar.transition()
@@ -305,8 +326,25 @@ d3.csv("data.csv", row).then(function(data) {
             //.attr('y', d => y2Scale(d.money))
             .attr('width', xScale.bandwidth())
             //.attr('height', d => y2Scale(0) - y2Scale(d.money))
-            .on("mouseover", bar_tooltip.show)
-            .on("mouseout", bar_tooltip.hide);
+            .on("mouseover", function(d) {
+                // code block for tooltip
+                bar_tooltipDiv.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                bar_tooltipDiv.html('社福支出比: ' + d.money + '%')
+                    .style("background", color(d.nation))
+                    .style("left", (d3.event.pageX) - 30 + "px")
+                    .style("top", (d3.event.pageY - 40) + "px");
+            })
+            .on("mouseout", function(d) {
+                // animate point back to origional style
+                d3.select(this)
+                    .transition()
+                    .duration(300)
+                bar_tooltipDiv.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
         bar.transition()
             .duration(500)
             .ease(d3.easeLinear)

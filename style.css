@@ -14,7 +14,16 @@ body { height: 80%; font-size: 0.875rem; font-family: Arial, sans-serif; }
   color:#000;
 }
 
-div.tooltip { 
+div.circle-tooltip { 
+    position: absolute;     
+    text-align: center;     
+    padding: 10px;  
+    font: 12px sans-serif;    
+    border-radius: 8px;     
+    pointer-events: none;     
+}
+
+div.bar-tooltip { 
     position: absolute;     
     text-align: center;     
     padding: 10px;  
@@ -48,3 +57,23 @@ div.tooltip {
   stroke: #6F257F;
   stroke-width: 2px;
   stroke-dasharray: 3,3;
+}
+
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 3px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 2px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.btn-text {
+  color: white;
+}
