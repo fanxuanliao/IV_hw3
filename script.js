@@ -162,9 +162,9 @@ d3.csv("data.csv", row).then(function(data) {
             .attr("cx", function(d) { return xScale(d.year) })
             .attr("cy", function(d) { return y1Scale(d.percentage) })
             .attr("r", 6)
-            /*
+            
             .on("mouseover", function(d) {
-
+/*
                 // animate point useful when we have points ploted close to each other.
                 d3.select(this)
                     .transition()
@@ -176,7 +176,7 @@ d3.csv("data.csv", row).then(function(data) {
                     .transition()
                     .duration(300)
                     .style("opacity", 1);
-
+*/
                 // code block for tooltip
                 tooltipDiv.transition()
                     .duration(200)
@@ -193,19 +193,19 @@ d3.csv("data.csv", row).then(function(data) {
                     .transition()
                     .duration(300)
                     .attr("r", 6)
-                    .style("opacity", .4);
-
+                    //.style("opacity", .4);
+/*
                 d3.select("#" + keyID)
                     .transition()
                     .duration(300)
                     .style("opacity", 0.4);
-
+*/
 
                 tooltipDiv.transition()
                     .duration(500)
                     .style("opacity", 0);
             });
-            */
+            
         //.on("mouseover", function() { focus.style("display", null); })
         //.on("mouseout", function() { focus.style("display", "none"); })
         // .on("mousemove", mousemove);
