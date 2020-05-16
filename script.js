@@ -111,8 +111,9 @@ d3.csv("data.csv", row).then(function(data) {
             .attr("id", d.key)
             .attr("transform", "translate(" + xScale.bandwidth() / 2 + ",0)")
             .style("stroke", function() { return d.color = color(d.key); })
-            .style("opacity", .4)
+            //.style("opacity", .4)
             .attr("d", line(d.values))
+            /*
             .on("mouseover", function(d) {
 
                 // animate point useful when we have points ploted close to each other.
@@ -135,6 +136,7 @@ d3.csv("data.csv", row).then(function(data) {
                     .style("opacity", .4);
 
             })
+            */
             .on("click", function() {
                 // Determine if current line is visible
                 var active = d3.select.active ? false : true,
@@ -155,11 +157,12 @@ d3.csv("data.csv", row).then(function(data) {
             .attr("class", "dot")
             .attr("id", d.key)
             .attr("transform", "translate(" + xScale.bandwidth() / 2 + ",0)")
-            .style("opacity", .4)
+            //.style("opacity", .4)
             .style('fill', function(d, i) { return color(d.nation); })
             .attr("cx", function(d) { return xScale(d.year) })
             .attr("cy", function(d) { return y1Scale(d.percentage) })
             .attr("r", 6)
+            /*
             .on("mouseover", function(d) {
 
                 // animate point useful when we have points ploted close to each other.
@@ -202,6 +205,7 @@ d3.csv("data.csv", row).then(function(data) {
                     .duration(500)
                     .style("opacity", 0);
             });
+            */
         //.on("mouseover", function() { focus.style("display", null); })
         //.on("mouseout", function() { focus.style("display", "none"); })
         // .on("mousemove", mousemove);
